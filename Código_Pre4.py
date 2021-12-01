@@ -3,6 +3,21 @@ import math
 import random
 import numpy as np
 
+#Variables
+let = string.ascii_lowercase +" "                                               #letras de nuestro abecedario
+cad = ""                                                                        #cadena a encriptar
+longitud=0                                                                      #longitud de la cadena
+clave=[[-1,0],[0,0]]                                                            #clave de encriptación
+deter=[0,0]                                                                     #aqui guarmamos el determinante de la clave
+                                                                                #y su inverso
+subpalabra =[0,0]                                                               #variable de apoyo para encriptar y decriptar
+sub = [[0]*(len(clave)-1) for i in range(len(clave)-1)]                         #subamtriz para calcular la clave inversa
+encriptado = []                                                                 #palabra encriptada
+inv =  [[0]*(len(clave)) for i in range(len(clave))]                            #inverso de la matriz clave
+nums = [x for x in range(len(let))]                                             #numero asociado a cada letra
+user = 0                                                                        #eleccion del usuario
+freno = bool()                                                                  # variable de control de errores
+
 #Función generadora de claves de encriptación
 def key():
     for i in range(2):
@@ -15,7 +30,7 @@ def key():
 
 #función para determinar si una clave es válida
 def valida(determinant):
-  var = bool(1)                                                                 #variable booleana, la iniciamos como TRUE 
+  var = bool(1)                                                                 #variable booleana, la iniciamos como TRUE
   invalid=[2,4,6,8,10,12,13,14,16,18,20,22,24]                                  #números que no tienen inverso modular 26
   if determinant%26==0 or invalid.count(deter[0]%26)>0:                         #el determinante no puede ser múltiplo de 26
    var = bool()                                                                 #var = FALSE (la clave NO es válida)
@@ -48,7 +63,7 @@ def Decryption(F,C):
             Col +=  1
         Fil+=1
     inv[F][C]=round(np.linalg.det(sub))                                         #determinante de la submatriz
-    inv[F][C]*=math.pow(-1,C+F+2)                                        
+    inv[F][C]*=math.pow(-1,C+F+2)
     inv[F][C]=inv[F][C]%26
     inv[F][C]*=deter[1]
     inv[F][C]=inv[F][C]%26
@@ -57,9 +72,9 @@ def Decryption(F,C):
 #función que asocia el abecedario con sus valores
 def mensaje():
     mensaje=""                                                                  #en mensaje guardamos las letras
-    for i in range(len(encriptado)):   
+    for i in range(len(encriptado)):
         for j in range(2):
-            mensaje+=let[nums.index(encriptado[i][j])]                          # el indice de a corresponde a 0, b es 1...                 
+            mensaje+=let[nums.index(encriptado[i][j])]                          # el indice de a corresponde a 0, b es 1...
     return mensaje
 
 
@@ -69,28 +84,14 @@ def detinv():
   while(not ((deter[0]*deter[1])-1)%26==0):                                     #el inverso modular 26
     deter[1]+=1                                                                 #del determinante de la clave
                                                                                 #explicacion al final del codigo
-#Variables
-let = string.ascii_lowercase +" "                                               #letras de nuestro abecedario
-cad = ""                                                                        #cadena a encriptar
-longitud=0                                                                      #longitud de la cadena
-clave=[[-1,0],[0,0]]                                                            #clave de encriptación
-deter=[0,0]                                                                     #aqui guarmamos el determinante de la clave
-                                                                                #y su inverso
-subpalabra =[0,0]                                                               #variable de apoyo para encriptar y decriptar
-sub = [[0]*(len(clave)-1) for i in range(len(clave)-1)]                         #subamtriz para calcular la clave inversa
-encriptado = []                                                                 #palabra encriptada
-inv =  [[0]*(len(clave)) for i in range(len(clave))]                            #inverso de la matriz clave
-nums = [x for x in range(len(let))]                                             #numero asociado a cada letra
-user = 0                                                                        #eleccion del usuario
-errorletra = bool(0)                                                            #por si el usuario escribe una letra en el menú
 print("BBVA BANCOMER".center(100))
 print("SISTEMA DE COMUNICACIÓN CIFRADO".center(100))
 while 1:
-  print("----- ¿Qué desea hacer? ----- \n")
+  print("\n ----- ¿Qué desea hacer? ----- \n")
   print("[0] Ya cuento con mi clave BBVA \n")
   print("[1] Para escribir su mensaje \n")
   print("[2] Para encriptar (Si no cuenta con una BBVA clave, se le dará una) \n")
-  print("[3] Para decriptar (Debe contar con una BBVA clave) \n")
+  print("[3] Para desencriptar (Debe contar con una BBVA clave) \n")
   print("[4] Para abrir la configuración \n")
   print("[5] Para comunicarse con un técnico \n")
   print("[6] Para obtener el enlace de términos y condiciones \n")
@@ -105,27 +106,35 @@ while 1:
   elif int(user)<0:
       print("\n Error. Se introdujo un número menor que 1, porpor favor introduce un numero del 1 al 7 sin decimales. \n")
 
-  if int(user)==0:                                                              #si el usuario ya tiene clave
+  if int(user)==0:
+    print(freno)                                                             #si el usuario ya tiene clave
     for i in range(2):
         for j in range(2):
             clave[i][j]=(input("\n Introduzca un numero para la clave: \n"))
             if clave[i][j].isnumeric()==0:
                 freno = bool(1)
                 break
+            print(clave,"\n")
         if freno:
             break
     if freno:
-        print("su clave NO puede contener números")
+        print("su clave NO puede contener letras")
+        freno = bool()
+        clave[0][0:2]=[0,0]                                                       #si la clave no es válida, reiniciamos la variable
+        clave[1][0:2]=[0,0]
         continue
-        print("\n Tu clave BBVA es la siguiente: \n ", clave)
+    for i in range(2):                                                          #El usuario ingresó los números de su Clave
+      for j in range(2):                                                        #como cadena de texto
+         clave[i][j]=int(clave[i][j])                                           #debemos convertir a entero
+    print("\n Tu clave BBVA es la siguiente: \n ", clave)
     deter[0]=round(np.linalg.det(clave))%26                                     #calculamos el determinante de la clave
     if valida(deter[0])==bool(1):                                               #si la clave es válida
       detinv()                                                                  #podemos calcular su inverso
     else:
       print("BBVA clave no valida, use una proporcionada por el sistema de cifrado oficial")
       print("para cualquier inconveniente comuníquese con soporte técnico ")
-      clave[1][0:2]=0                                                           #si la clave no es válida, reiniciamos la variable
-      clave[2][0:2]=0                               
+      clave[0][0:2]=[-1,0]                                                       #si la clave no es válida, reiniciamos la variable
+      clave[1][0:2]=[0,0]
 
   if int(user) ==1:
     cad=input("\n Porfavor escriba su mensaje -SIN ESPACIOS- \n")               #leemos el mensaje del usuario
@@ -137,7 +146,7 @@ while 1:
         print("Su mensaje NO puede contener números")
         print("Puede ingresar números como palabras, ejemplo: 'dos' \n")
         continue
-    cad.lower()                                                                 #todo en minúscula
+    cad = cad.lower()                                                                 #todo en minúscula
     longitud = len(cad)                                                         #longitud original del mensaje
     if len(cad)%2 != 0:                                                         #la longitud del mensaje debe ser par
       cad+=" "
@@ -158,7 +167,7 @@ while 1:
     user=int(input())
     if int(user)== 1:                                                                #si el mensaje del usuario ya está encriptado
       index = 0                                                                 #guardamos la el mensaje en la variable "encriptado"
-      encriptado = [[0,0] for i in range(int(len(palabra)/2))]                  #separamos la palabra en pares, ejemplo "xc bv fr..." 
+      encriptado = [[0,0] for i in range(int(len(palabra)/2))]                  #separamos la palabra en pares, ejemplo "xc bv fr..."
       for i in range(int(len(palabra)/2)):                                      #el vector encriptado se verá al final así:
         encriptado[i][0:2]=palabra[index:index+2]                               #[[5,12],[22,11],[34,56]] ESTO SOLO ES UN EJEMPLO
         index+=2
@@ -176,16 +185,16 @@ while 1:
         for i in range(int(len(palabra)/2)):                                        #vamos a agrupar los caracteres en pares
             subpalabra[0:2]=palabra[index:index+2]                                    # y encriptarlos
             index+=2                                                                  #ejemplo: "help" primero encriptamos he
-        encriptado=Encryption()                                                   #encriptamos el mensaje
+            encriptado=Encryption()                                                   #encriptamos el mensaje
         print("\n Palabra Encriptada \n", mensaje())
-        print()  
+        print()
 #**********************************************************
 
   elif int(user)==3:                                                                 #decriptación
    if cad=="":
       print("\nError, debes escribir un mensaje primero\n")
    else:
-          
+
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
         for i in range(len(clave)):                                                 #calculamos el inverso de la clave
@@ -218,9 +227,9 @@ while 1:
     print ("\n Su mensaje ha sido enviado a un operador técnico. \n ¡Gracias por elegirnos!. \n")
   elif int(user)==6:
     print("\n https://www.bbva.mx/personas/faq/productos/tarjetas/promociones/terminos-puntos.html ")                                                                 #salir
-    
+
   elif int(user)==7:
-    exit() 
+    exit()
 
 
 #inverso modular 26
