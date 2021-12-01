@@ -162,8 +162,8 @@ while 1:
     print("\n Palabra ingresada: \n", palabra)
 #**********************************************************
     print("\n ¿Su mensaje esta encriptado? \n")
-    print(" [1] Si")
-    print(" [2] No")
+    print(" [1] Sí.")
+    print(" [2] No (Si elige esta opción, elija 2 nuevamente).")
     user=int(input())
     if int(user)== 1:                                                                #si el mensaje del usuario ya está encriptado
       index = 0                                                                 #guardamos la el mensaje en la variable "encriptado"
